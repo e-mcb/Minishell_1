@@ -1,0 +1,16 @@
+Une ligne de commande est une ou plusieurs commandes separees par des pipes avec les options de chaque commandes, les redirections (< > << >>).
+On balaye une premiere fois la ligne de commande pour chercher des potentiels "||", les "&&" qui renveront un message d'erreur. Si la ligne de commande commence ou termine par un | on renvoie aussi un message d'erreur.
+On split la ligne de commande avec | comme separateur
+On traite chaque str independamment
+-On isole les redirections (Les chevrons sont suivis soit par des espaces soit directement par le fichier/limiter de redirection)
+-Il ne reste que la commande et ses options, la commande sera le premier terme trouve dans le reste
+-On creer un tableau de char* avec ce reste pour l'envoyer a execve dans l'ordre dans lequel les options sont tapees
+
+Ensuite, on check si la commande est un built-in, sinon on l'envoie a execve
+
+
+Gestion des pipes:
+Le nb de cellule du tableau de notre premier split -1 est le nombre de pipe a creer
+[pipex_bonus]
+
+Renvoyer le prompt pour accepter une nouvelle ligne de commande
