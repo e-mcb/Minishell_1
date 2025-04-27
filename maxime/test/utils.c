@@ -7,7 +7,7 @@ size_t ft_strlcpy(char *dst, const char *src, size_t dstsize)
 
 	if (!dst || !src)
 		return (0);
-	src_len = strlen(src);
+	src_len = ft_strlen(src);
 	if (dstsize == 0)
 		return (src_len);
 	i = 0;
@@ -47,7 +47,7 @@ int count_quotes (char *str)
 	return (flag_s + flag_d);
 }
 
-char *strnstr(const char *haystack, const char *needle, size_t len)
+char *ft_strnstr(const char *haystack, const char *needle, size_t len)
 {
 	size_t needle_len;
 
@@ -61,4 +61,51 @@ char *strnstr(const char *haystack, const char *needle, size_t len)
 		haystack++;
 	}
 	return NULL;
+}
+
+char *ft_substrword(char *str, int start, int end)
+{
+	char *word;
+	int i;
+
+	i = 0;
+	word = malloc(sizeof(char) * (end - start + 1));
+	if (!word)
+		return (NULL);
+	while (start < end)
+	{
+		word[i] = str[start];
+		i++;
+		start++;
+	}
+	word[i] = '\0';
+	return (word);
+}
+
+char *ft_strdup(char *str)
+{
+	char *dup;
+	int i;
+
+	i = 0;
+	dup = malloc(sizeof(char) * (strlen(str) + 1));
+	if (!dup)
+		return (NULL);
+	while (str[i])
+	{
+		dup[i] = str[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
+}
+
+size_t ft_strlen(const char *str)
+{
+	size_t i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
 }
