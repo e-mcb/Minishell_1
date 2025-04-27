@@ -2,6 +2,7 @@
 	"files.associations": {
 		"types.h": "c",
 		"history.h": "c",
-		"errno.h": "c"
+		"errno.h": "c",
+		"signal.h": "c"
 	}
 }
