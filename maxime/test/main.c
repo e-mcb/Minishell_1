@@ -80,12 +80,13 @@ int add_token(t_token **token, char *str, t_token_type type)
 	new_token = create_token(str);
 	if (!new_token)
 		return (0);
+	new_token->type = type;
 	if (*token == NULL)
 	{
 		*token = new_token;
 		return (0); //pour erreurs
 	}
-	new_token->type = type;
+	
 	current_token = *token;
 	while (current_token->next != NULL)
 		current_token = current_token->next;
