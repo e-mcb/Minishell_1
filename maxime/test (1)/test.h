@@ -19,20 +19,28 @@
 
 typedef enum e_token_type
 {
-	TOKEN_TYPE_WORD,
-	TOKEN_TYPE_PIPE,
-	TOKEN_TYPE_REDIRECT_IN,
-	TOKEN_TYPE_REDIRECT_OUT,
-	TOKEN_TYPE_APPEND,
-	TOKEN_TYPE_HEREDOC,
-	TOKEN_TYPE_SQUOTE,
-	TOKEN_TYPE_DQUOTE,
-	TOKEN_TYPE_FD,
+	TOKEN_TYPE_WORD, //0
+	TOKEN_TYPE_PIPE, //1
+	TOKEN_TYPE_REDIRECT_IN, //2
+	TOKEN_TYPE_REDIRECT_OUT, //3
+	TOKEN_TYPE_APPEND, //4
+	TOKEN_TYPE_HEREDOC, //5
+	TOKEN_TYPE_SQUOTE, // ???
+	TOKEN_TYPE_DQUOTE, // ???
+	TOKEN_TYPE_FD, // 8
+	TOKEN_TYPE_CMD, // 9
+	TOKEN_TYPE_ARG, // 10
+	TOKEN_TYPE_LIMITER, // 11
+	TOKEN_TYPE_FILE, // 12
 } t_token_type;
+
+
+
 
 typedef struct s_token
 {
 	t_token_type	type;
+	int				split_rank;
 	char			*value;
 	struct s_token	*next;
 } t_token;
@@ -50,6 +58,7 @@ char 	*strnstr(const char *haystack, const char *needle, size_t len);
 char *ft_strdup(char *str);
 size_t ft_strlen(const char *str);
 char *ft_substrword(char *str, int start, int end);
-
+void refine_token_type(t_token *token);
+char	*trim_quotes(char *str);
 
 #endif

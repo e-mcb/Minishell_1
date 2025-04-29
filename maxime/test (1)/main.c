@@ -80,13 +80,12 @@ int add_token(t_token **token, char *str, t_token_type type)
 	new_token = create_token(str);
 	if (!new_token)
 		return (0);
-	new_token->type = type;
 	if (*token == NULL)
 	{
 		*token = new_token;
 		return (0); //pour erreurs
 	}
-	
+	new_token->type = type;
 	current_token = *token;
 	while (current_token->next != NULL)
 		current_token = current_token->next;
@@ -145,30 +144,6 @@ void test_tokenize(char *str, t_token **token)
 			w_start = -1;
 			free(tmp);
 		}
-		if (str[i] == '<' || str[i] == '>' || str[i] == '|')
-		{
-			if (str[i + 1] && ((str[i] == '<' && str[i + 1] == '<') || (str[i] == '>' && str[i + 1] == '>')))
-			{
-				tmp = ft_substrword(str, i, i + 2);
-				if (str[i] == '<')
-					add_token(token, tmp, TOKEN_TYPE_HEREDOC);
-				else
-					add_token(token, tmp, TOKEN_TYPE_APPEND);
-				free(tmp);
-				i++;
-			}
-			else
-			{
-				tmp = ft_substrword(str, i, i + 1);
-				if (str[i] == '<')
-					add_token(token, tmp, TOKEN_TYPE_REDIRECT_IN);
-				else if (str[i] == '>')
-					add_token(token, tmp, TOKEN_TYPE_REDIRECT_OUT);
-				else if (str[i] == '|')
-					add_token(token, tmp, TOKEN_TYPE_PIPE);
-				free(tmp);
-			}
-		}
 		i++;
 	}
 }
@@ -177,7 +152,7 @@ int main(void)
 {
 	t_token *token;
 
-	char *str = "cat|cat>out.txt||";
+	char *str = "cat|cat>out.txt|cat<in.txt|cat>>out.txt|cat<<in.txt|cat>out.txt|cat<in.txt|cat>>out.txt|cat<<in.txt|cat>out.txt|cat<in.txt|cat>>out.txt|cat<<in.txt|cat>out.txt|cat<in.txt|cat>>out.txt|cat<<in.txt";
 	token = NULL;
 
 	printf ("test\n");
@@ -185,7 +160,7 @@ int main(void)
 	test_tokenize(str, &token);
 	while (token)
 	{
-		printf("Token: %s   token type: %d\n", token->value, token->type);
+		printf("Token: %s\n", token->value);
 		token = token->next;
 	}
 	return (0);

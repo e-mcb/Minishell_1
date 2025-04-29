@@ -109,3 +109,22 @@ size_t ft_strlen(const char *str)
 		i++;
 	return (i);
 }
+
+char	*trim_quotes(char *str)
+{
+	int		start;
+	int		end;
+	char	*trimmed;
+
+	start = 0;
+	end = ft_strlen(str) - 1;
+	if (str[start] == '"' || str[start] == '\'')
+		start++;
+	if (str[end] == '"' || str[end] == '\'')
+		end--;
+	trimmed = malloc(end - start + 2);
+	if (!trimmed)
+		return (NULL);
+	ft_strlcpy(trimmed, &str[start], end - start + 2);
+	return (trimmed);
+}
