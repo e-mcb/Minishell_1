@@ -100,3 +100,58 @@ void	ft_print_array(char **str)
 	}
 	return ;
 }
+
+int	ft_isspace(char c)
+{
+	if (c == ' ' || c == '\t' || c == '\n'
+		|| c == '\v' || c == '\f' || c == '\r')
+		return (1);
+	else
+		return (0);
+}
+
+int	ft_starts_or_ends_with_pipe(const char *str)
+{
+	const char	*end;
+
+	if (!str)
+		return (0);
+	while (ft_isspace(*str))
+		str++;
+	if (*str == '\0')
+		return (0);
+	if (*str == '|')
+		return (1);
+	end = str + ft_strlen(str) - 1;
+	while (end > str && ft_isspace(*end))
+		end--;
+	if (*end == '|')
+		return (1);
+	return (0);
+}
+
+int	ft_has_invalid_quotes(const char *str)
+{
+	int		i;
+	bool	in_quotes;
+	char	opening_quote;
+
+	i = 0;
+	in_quotes = false;
+	opening_quote = 0;
+	while (str[i])
+	{
+		if ((str[i] == '\'' || str[i] == '\"'))
+		{
+			if (!in_quotes)
+			{
+				in_quotes = true;
+				opening_quote = str[i];
+			}
+			else if (str[i] == opening_quote)
+				in_quotes = false;
+		}
+		i++;
+	}
+	return (in_quotes);
+}
