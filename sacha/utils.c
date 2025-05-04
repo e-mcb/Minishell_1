@@ -155,3 +155,45 @@ int	ft_has_invalid_quotes(const char *str)
 	}
 	return (in_quotes);
 }
+
+char *ft_remove_wrapping_quotes(const char *str)
+{
+	int		i;
+	int		j;
+	bool	in_quotes;
+	char	quote;
+	char	*result;
+
+	i = 0;
+	j = 0;
+	in_quotes = false;
+	quote = 0;
+	if (!str)
+		return (NULL);
+	result = malloc(sizeof(char) * (ft_strlen(str) + 1));
+	if (!result)
+		return (NULL);
+	while (str[i])
+	{
+		if ((str[i] == '\'' || str[i] == '\"'))
+		{
+			if (!in_quotes)
+			{
+				in_quotes = true;
+				quote = str[i];
+			}
+			else if (str[i] == quote)
+			{
+				in_quotes = false;
+				quote = 0;
+			}
+			else
+				result[j++] = str[i];
+		}
+		else
+			result[j++] = str[i];
+		i++;
+	}
+	result[j] = '\0';
+	return (result);
+}
