@@ -7,7 +7,7 @@
 
 int main (int argc, char **argv, char **env)
 {
-	char *arr[] = {"echo", "\"salut\"", NULL};
+	char *arr[] = {"cat", "-e out", NULL};
 
-	execve("/usr/bin/echo", arr, env);
+	execve("/usr/bin/cat", arr, env);
 }

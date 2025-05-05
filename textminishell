@@ -121,3 +121,28 @@ Chevrons:	-On check si avant le chevron il y a un chiffre
  		}
  	}
  }
+
+ ----------------------------------------------------------------------------
+
+ 05/05 Minishell
+
+Lexer -> le gros est fait, reste a gerer les frees de liste chainees etc
+
+Asuivre : Expand -> Ce soir
+			Parsing (Gestion d'erreurs etc).
+			
+Expand -> On expand apres avoir creer les tokens, mais avant de refine les tokens word. Cependant, on attribuera les tokens file avant de refine -> les tokens words seront des commandes ou des arguments
+On expand le meme type, en pensant a conserver la valeur d'avant l'expand (pour la gestion d'erreurs).
+On substitue chaque expand trouve dans un maillon par leur valeur, on split cette valeur (split2) et on creer autant de nouveau maillon de notre liste chainee qu'il y a de cellules de split en attribuant le meme type de token a chaque maillon
+Et seulement apres, on refine les commandes et les arguments
+
+Fonctions:
+Refaire le refine token -> deux passages differents -> Sacha + chercher la variable dans l'env -> On envoie un array (Si on essaie d'expand un truc qui n'existe pas, renvoie une chaine vide)
+Expand -> Realloc (), Manipulation des pointeurs de la liste chainee, substitution -> Maxime 
+ 
+PAS D'EXPAND SI ON EST SUR UN LIMITER DE HEREDOC 
+
+1 -> On split +creer les tokens (A ce momemt la, seuls les operateurs sont definis)
+2 -> On refine une premiere fois (On peut determiner les FILES, LIMITER, FD)
+3 -> On expand
+4 -> On refine les commandes/arguments

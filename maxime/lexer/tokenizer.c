@@ -6,7 +6,7 @@
 /*   By: mzutter <mzutter@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 15:14:08 by mzutter           #+#    #+#             */
-/*   Updated: 2025/05/04 16:37:57 by mzutter          ###   ########.fr       */
+/*   Updated: 2025/05/05 19:05:53 by mzutter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	handle_word_boundaries(int i, t_quote_state *state, t_token **token,
 		&& state->w_start >= 0 && state->in_quotes == false)
 	{
 		tmp = ft_substrword(ctx->str, state->w_start, i);
-		add_token(token, tmp, TOKEN_TYPE_WORD, ctx->rank);
+		add_token(token, tmp, WORD, ctx->rank);
 		state->w_start = -1;
 		free(tmp);
 	}
@@ -57,11 +57,11 @@ void	handle_single_operator(int i, t_token **token, t_input_context *ctx)
 
 	tmp = ft_substrword(ctx->str, i, i + 1);
 	if (ctx->str[i] == '<')
-		add_token(token, tmp, TOKEN_TYPE_REDIRECT_IN, ctx->rank);
+		add_token(token, tmp, IN, ctx->rank);
 	else if (ctx->str[i] == '>')
-		add_token(token, tmp, TOKEN_TYPE_REDIRECT_OUT, ctx->rank);
+		add_token(token, tmp, OUT, ctx->rank);
 	else if (ctx->str[i] == '|')
-		add_token(token, tmp, TOKEN_TYPE_PIPE, ctx->rank);
+		add_token(token, tmp, PIPE, ctx->rank);
 	free(tmp);
 }
 
@@ -74,9 +74,9 @@ bool	handle_double_operator(int i, t_token **token, t_input_context *ctx)
 	{
 		tmp = ft_substrword(ctx->str, i, i + 2);
 		if (ctx->str[i] == '<')
-			add_token(token, tmp, TOKEN_TYPE_HEREDOC, ctx->rank);
+			add_token(token, tmp, HDOC, ctx->rank);
 		else
-			add_token(token, tmp, TOKEN_TYPE_APPEND, ctx->rank);
+			add_token(token, tmp, APPEND, ctx->rank);
 		free(tmp);
 		return (true);
 	}

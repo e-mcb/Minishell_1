@@ -6,7 +6,7 @@
 /*   By: mzutter <mzutter@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 13:43:06 by mzutter           #+#    #+#             */
-/*   Updated: 2025/05/04 16:38:36 by mzutter          ###   ########.fr       */
+/*   Updated: 2025/05/05 19:35:37 by mzutter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	add_token(t_token **token, char *str, t_token_type type, int rank)
 	if (!new_token)
 		return (0);
 	new_token->type = type;
-	new_token->split_rank = rank;
+	new_token->rank = rank;
 	if (*token == NULL)
 	{
 		*token = new_token;

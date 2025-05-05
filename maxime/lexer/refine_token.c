@@ -6,11 +6,25 @@
 /*   By: mzutter <mzutter@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 17:12:13 by mzutter           #+#    #+#             */
-/*   Updated: 2025/05/04 17:22:45 by mzutter          ###   ########.fr       */
+/*   Updated: 2025/05/05 19:38:13 by mzutter          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
+
+int is_digit(char *str)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 static bool	is_redir(t_token *t)
 {
@@ -21,7 +35,7 @@ static bool	is_fd_case(t_token *t)
 {
 	return (t->next && (t->next->type == IN || t->next->type == OUT
 			|| t->next->type == APPEND || t->next->type == HDOC)
-		&& t->rank == t->next->rank && is_digit(t->val));
+		&& t->rank == t->next->rank && is_digit(t->value));
 }
 
 void	set_word_type(t_token *t, t_token *p, bool *is_cmd)
