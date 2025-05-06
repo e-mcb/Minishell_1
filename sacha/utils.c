@@ -22,6 +22,24 @@ int	ft_strsize(char **str)
 	return (i);
 }
 
+int	ft_strncmp(char *s1, char *s2, unsigned int n)
+{
+	unsigned char	*str1;
+	unsigned char	*str2;
+	size_t			i;
+
+	str1 = (unsigned char *)s1;
+	str2 = (unsigned char *)s2;
+	i = 0;
+	while ((str1[i] || str2[i]) && i < n)
+	{
+		if (str1[i] != str2[i])
+			return (str1[i] - str2[i]);
+		i++;
+	}
+	return (0);
+}
+
 void	ft_free_str_array(char **str)
 {
 	int	i;
@@ -196,4 +214,23 @@ char *ft_remove_wrapping_quotes(const char *str)
 	}
 	result[j] = '\0';
 	return (result);
+}
+
+char *ft_getenv(char *var, char **env_copy)
+{
+    size_t len;
+    int i = 0;
+    char *entry;
+
+    if (!var)
+        return NULL;
+    len = ft_strlen(var);
+    while (env_copy[i])
+    {
+        entry = env_copy[i];
+        if (ft_strncmp(entry, var, len) == 0 && entry[len] == '=')
+            return entry + len + 1;
+        i++;
+    }
+    return NULL;
 }

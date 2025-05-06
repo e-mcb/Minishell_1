@@ -40,36 +40,46 @@
 
 
 // LE MAIN POUR ENLEVER LES QUOTES OUVRANTES ET FERMANTES
-int main(void)
-{
-	const char *tests[] = {
-		"'Hello world'",
-		"\"Hello world\"",
-		"'He said \"hi\"'",
-		"\"It's fine\"",
-		"'Already clean'",
-		"'Nested 'quotes''",
-		"'Just one side",
-		"\"Mismatched'",
-		NULL
-	};
-	int	i;
+//int main(void)
+// {
+// 	const char *tests[] = {
+// 		"'Hello world'",
+// 		"\"Hello world\"",
+// 		"'He said \"hi\"'",
+// 		"\"It's fine\"",
+// 		"'Already clean'",
+// 		"'Nested 'quotes''",
+// 		"'Just one side",
+// 		"\"Mismatched'",
+// 		NULL
+// 	};
+// 	int	i;
 
-	i = 0;
-	while (tests[i] != NULL)
-	{
-		char *trimmed = ft_remove_wrapping_quotes(tests[i]);
-		if (trimmed)
-		{
-			printf("Input : %s\n", tests[i]);
-			printf("Output: %s\n\n", trimmed);
-			free(trimmed);
-		} 
-		else
-		{
-			printf("Input : %s\nOutput: (null)\n\n", tests[i]);
-		}
-		i++;
-	}
-	return (0);
+// 	i = 0;
+// 	while (tests[i] != NULL)
+// 	{
+// 		char *trimmed = ft_remove_wrapping_quotes(tests[i]);
+// 		if (trimmed)
+// 		{
+// 			printf("Input : %s\n", tests[i]);
+// 			printf("Output: %s\n\n", trimmed);
+// 			free(trimmed);
+// 		} 
+// 		else
+// 		{
+// 			printf("Input : %s\nOutput: (null)\n\n", tests[i]);
+// 		}
+// 		i++;
+// 	}
+// 	return (0);
+// }
+
+int	main(int argc, char **argv, char **envp)
+{
+	char *value = ft_getenv(argv[1], envp);
+    if (value)
+        printf("%s = %s\n", argv[1], value);
+    else
+        printf("Variable non trouvée.\n");
+    return (0);
 }
