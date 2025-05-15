@@ -67,32 +67,36 @@ int array_len(char **str)
 // 	return (0);
 // }
 
+int	is_n_flag(char *s)
+{
+	int	i = 0;
+
+	if (!s || s[i++] != '-')
+		return (0);
+	while (s[i])
+		if (s[i++] != 'n')
+			return (0);
+	return (1);
+}
+
 int	ft_echo(char **str)
 {
-    int	start;
-	int	newline;
-    int len;
+	int	start = 0;
+	int	newline = 1;
+	int	len = array_len(str);
 
-	start = 0;
-	newline = 1;
-    len = array_len(str);
-    if (str)
-    {
-        if (str[start] && ft_strcmp(str[start], "-n") == 0)
-        {
-            newline = 0;
-            start = 1;
-        }
-        while (str[start] && ft_strcmp(str[start], "-n") == 0)
-            start++;
-        while (str[start])
-        {
-            printf("%s", str[start]);
-            if (start < len - 1)
-                printf(" ");
-            start++;
-        }
-    }	
+	while (str[start] && is_n_flag(str[start]))
+	{
+		newline = 0;
+		start++;
+    }
+	while (str[start])
+	{
+		printf("%s", str[start]);
+		if (str[start + 1])
+			printf(" ");
+		start++;
+	}
 	if (newline)
 		printf("\n");
 	return (0);
@@ -105,6 +109,7 @@ int main(void)
     char *test3[] = {"-n", "-n", "Hello", NULL};
     char *test4[] = {"-n", "-wrong", "Hello", NULL};
     char *test5[] = {NULL};
+    char *test6[] = {"-nnnnnn", "Hello", NULL};
 
     printf("Test 1:\n");
     ft_echo(test1); // => Hello world\n
@@ -120,6 +125,9 @@ int main(void)
 
     printf("Test 5:\n");
     ft_echo(test5); // => \n
+
+    printf("Test 6:\n");
+    ft_echo(test6); // => \n
 
     return 0;
 }
