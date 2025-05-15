@@ -1,13 +1,5 @@
 #include "expand.h"
 
-char *get_env_value(const char *name)
-{
-	char *value = getenv(name);
-	if (!value)
-		return strdup("");
-	return strdup(value);
-}
-
 static void init_ex(t_expand *ex)
 {
     ex->i = 0;
@@ -36,26 +28,25 @@ static void process_double_quote(const char *input, t_expand *ex)
     ex->start = ex->i;
 }
 
-static void process_dollar(const char *input, char *varname, char *value, t_expand *ex)
+static void process_dollar(const char *input, t_expand *ex)
 {
+    char    *value;
+
     if (ex->i > ex->start)
         ex->result[ex->j++] = strndup_custom(input + ex->start, ex->i - ex->start);
-    ex->i++;
-    ex->start = ex->i;
-    while (input[ex->i] && (ft_isalnum(input[ex->i]) || input[ex->i] == '_'))
-        ex->i++;
-    varname = strndup_custom(input + ex->start, ex->i - ex->start);
-    value = get_env_value(varname);
-    ex->result[ex->j++] = value;
-    free(varname);
-    ex->start = ex->i;
+    if (input[ex->i + 1] == '$')
+        case_double_dollar(ex);
+    else if (input[ex->i + 1] == ' ' || input[ex->i + 1] == '\0')//WHITE SPACE ????
+        case_only_dollar(ex);
+    else if (input[ex->i + 1] == '?')
+        case_question_mark(ex, value);
+    else
+        case_env_var(ex, value, input);   
 }
 
 char **split_and_expand(const char *input)
 {
     t_expand    ex;
-    char    *varname;
-    char    *value;
 
 	init_ex(&ex);
     ex.result = malloc(sizeof(char *) * (ft_count_segments(input) + 1));
@@ -68,7 +59,7 @@ char **split_and_expand(const char *input)
 		else if (input[ex.i] == '"' && !ex.in_single_quote)
             process_double_quote(input, &ex);
 		else if (input[ex.i] == '$' && !ex.in_single_quote)
-            process_dollar(input, varname, value, &ex);
+            process_dollar(input, &ex);
 		else
             ex.i++;
 	}

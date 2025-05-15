@@ -2,7 +2,7 @@
 
 int main(void)
 {
-	char *input = "'Salut $USER, \"$USER\" et '$USER' encore $USER!'";
+	char *input = "sach$4a le$4  user $USER $";
 	char **parsed = split_and_expand(input);
 	char	*expended = join_chars(parsed);
 
