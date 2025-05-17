@@ -201,11 +201,11 @@ void	update_env(char *var, char *str, char **env)
     char *entry;
 	char *temp;
 
-    len = ft_strlen(str);
+    len = ft_strlen(var);
     while (env[i])
     {
         entry = env[i];
-        if (ft_strncmp(entry, var, 2) == 0)
+        if (ft_strncmp(entry, var, len) == 0)
 		{
             free(env[i]);
 			env[i] = ft_strjoin(var, str);
@@ -264,7 +264,5 @@ int main(int argc, char **argv, char **envp)
         printf("Current directory: %s\n", cwd);
     else
         perror("getcwd");
-    
-
     return 0;
 }
