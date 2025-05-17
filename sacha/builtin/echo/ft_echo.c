@@ -189,31 +189,6 @@ void	update_env(char *str, char **env)
     }
 }
 
-// MAIN SI EXECUTABLE
-// int	main(int argc, char *argv[])
-// {
-// 	int	start;
-// 	int	newline;
-
-// 	start = 1;
-// 	newline = 1;
-// 	if (argc > 1 && ft_strcmp(argv[1], "-n") == 0)
-// 	{
-// 		newline = 0;
-// 		start = 2;
-// 	}
-// 	while (start < argc)
-// 	{
-// 		printf("%s", argv[start]);
-// 		if (start < argc - 1)
-// 			printf(" ");
-// 		start++;
-// 	}
-// 	if (newline)
-// 		printf("\n");
-// 	return (0);
-// }
-
 int	is_n_flag(char *s)
 {
 	int	i = 0;
@@ -283,6 +258,5 @@ int main(int argc, char **argv, char **envp)
 
     printf("Test 6:\n");
     ft_echo(test6, env); // => \n
-
     return 0;
 }
