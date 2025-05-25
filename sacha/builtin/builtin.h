@@ -7,6 +7,11 @@
 #include <stdlib.h>
 #include <errno.h>
 
+typedef struct s_shell
+{
+	char	**env;
+	int     exit_status;
+}	t_shell;
 
 size_t	ft_strlen(const char *str);
 int	    ft_strsize(char **str);
@@ -19,5 +24,7 @@ char	**ft_strdup_array(char **src);
 void	ft_print_array(char **str);
 void	ft_putstr_fd(char *str, int fd);
 void	update_env(char *var, char *str, char **env);
+int		env_var_exists(char *var, char **env);
+char 	**add_env_var(char *var, char *str, char **env);
 
 #endif

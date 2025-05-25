@@ -54,19 +54,19 @@ int	ft_strncmp(char *s1, char *s2, unsigned int n)
 	return (0);
 }
 
-int array_len(char **str)
+int	array_len(char **str)
 {
-    int i;
-    int len;
+	int	i;
+	int	len;
 
-    i = 0;
-    len = 0;
-    while(str[i])
-    {
-        len += ft_strlen(str[i]);
-        i++;
-    }
-    return (len);
+	i = 0;
+	len = 0;
+	while (str[i])
+	{
+		len += ft_strlen(str[i]);
+		i++;
+	}
+	return (len);
 }
 
 char	*ft_strdup(const char *s)
@@ -172,6 +172,32 @@ void	ft_putstr_fd(char *str, int fd)
 	}
 }
 
+int	env_var_exists(char *var, char **env)
+{
+	size_t	len;
+	int		i;
+	char	*full_var;
+
+	if (!var || !env)
+		return (0);
+	full_var = ft_strjoin(var, "=");
+	if (!full_var)
+		return (0);
+	len = strlen(full_var);
+	i = 0;
+	while (env[i])
+	{
+		if (strncmp(env[i], full_var, len) == 0)
+		{
+			free(full_var);
+			return (1);
+		}
+		i++;
+	}
+	free(full_var);
+	return (0);
+}
+
 void	update_env(char *var, char *str, char **env)
 {
 	size_t	len;
@@ -196,4 +222,32 @@ void	update_env(char *var, char *str, char **env)
 		i++;
 	}
 	free(full_var);
+}
+
+char	**add_env_var(char *var, char *str, char **env)
+{
+	int		len;
+	char	**new_env;
+	char	*new_var;
+	int		i;
+	char	*temp;
+
+	len = ft_strsize(env);
+	new_env = malloc(sizeof(char *) * (len + 2));
+	if (!new_env)
+		return (env);
+	i = -1;
+	while (++i < len)
+		new_env[i] = env[i];
+	new_var = NULL;
+	temp = ft_strjoin("=", str);
+	if (!temp)
+		return (free(new_env), env);
+	new_var = ft_strjoin(var, temp);
+	free(temp);
+	if (!new_var)
+		return (free(new_env), env);
+	new_env[len] = new_var;
+	new_env[len + 1] = NULL;
+	return (free(env), new_env);
 }
