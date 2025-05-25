@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdlib.h>
+#include "builtin.h"
 
 size_t	ft_strlen(const char *str)
 {
@@ -25,6 +22,20 @@ int	ft_strsize(char **str)
 	return (i);
 }
 
+int	ft_strcmp(char *s1, char *s2)
+{
+	int	i;
+
+	i = 0;
+	while (s1[i] || s2[i])
+	{
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+		i++;
+	}
+	return (0);
+}
+
 int	ft_strncmp(char *s1, char *s2, unsigned int n)
 {
 	unsigned char	*str1;
@@ -41,6 +52,41 @@ int	ft_strncmp(char *s1, char *s2, unsigned int n)
 		i++;
 	}
 	return (0);
+}
+
+int array_len(char **str)
+{
+    int i;
+    int len;
+
+    i = 0;
+    len = 0;
+    while(str[i])
+    {
+        len += ft_strlen(str[i]);
+        i++;
+    }
+    return (len);
+}
+
+char	*ft_strdup(const char *s)
+{
+	char	*dup;
+	int		len;
+	int		i;
+
+	len = ft_strlen(s);
+	dup = malloc(sizeof(char) * (len + 1));
+	if (!dup)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)
@@ -66,26 +112,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	}
 	s3[i + j] = 0;
 	return (s3);
-}
-
-char	*ft_strdup(const char *s)
-{
-	char	*dup;
-	int		len;
-	int		i;
-
-	len = ft_strlen(s);
-	dup = malloc(sizeof(char) * (len + 1));
-	if (!dup)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		dup[i] = s[i];
-		i++;
-	}
-	dup[i] = '\0';
-	return (dup);
 }
 
 char	**ft_strdup_array(char **src)
@@ -115,27 +141,6 @@ char	**ft_strdup_array(char **src)
 	return (dst);
 }
 
-void	update_env(char *var, char *str, char **env)
-{
-	size_t len;
-    int i = 0;
-    char *entry;
-	char *temp;
-
-    len = ft_strlen(var);
-    while (env[i])
-    {
-        entry = env[i];
-        if (ft_strncmp(entry, var, len) == 0)
-		{
-            free(env[i]);
-			env[i] = ft_strjoin(var, str);
-			return ;
-		}
-        i++;
-    }
-}
-
 void	ft_print_array(char **str)
 {
 	int	i;
@@ -153,31 +158,42 @@ void	ft_print_array(char **str)
 	return ;
 }
 
-int ft_pwd(char **str, char **env)
+void	ft_putstr_fd(char *str, int fd)
 {
-    char cwd[1024];
+	int	i;
 
-    update_env("_=", str[ft_strsize(str) - 1], env);
-    if (getcwd(cwd, sizeof(cwd)) != NULL)
-    {
-        printf("%s\n", cwd);
-        ft_print_array(env);
-        return 0;
-    }
-    else
-    {
-        perror("pwd");
-        ft_print_array(env);
-        return 1;
-    }
+	if (!str)
+		return ;
+	i = 0;
+	while (str[i])
+	{
+		write(fd, &str[i], 1);
+		i++;
+	}
 }
 
-int main(int argc, char **argv, char **envp)
+void	update_env(char *var, char *str, char **env)
 {
-    
-	char **env;
+	size_t	len;
+	int		i;
+	char	*full_var;
+	char	*temp;
 
-	env = ft_strdup_array(envp);
-
-    ft_pwd(argv, env);
+	i = 0;
+	full_var = ft_strjoin(var, "=");
+	len = ft_strlen(full_var);
+	while (env[i])
+	{
+		if (ft_strncmp(env[i], full_var, len) == 0)
+		{
+			free(env[i]);
+			temp = ft_strjoin("=", str);
+			env[i] = ft_strjoin(var, temp);
+			free(temp);
+			free(full_var);
+			return ;
+		}
+		i++;
+	}
+	free(full_var);
 }
