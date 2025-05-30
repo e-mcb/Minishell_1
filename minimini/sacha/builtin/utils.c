@@ -1,5 +1,21 @@
 #include "builtin.h"
 
+int	ft_isalnum(int c)
+{
+	if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122))
+		return (42);
+	else
+		return (0);
+}
+
+int	ft_isalpha(int c)
+{
+	if ((c < 'A') || (c > 'Z' && c < 'a') || (c > 'z'))
+		return (0);
+	else
+		return (42);
+}
+
 size_t	ft_strlen(const char *str)
 {
 	size_t	i;

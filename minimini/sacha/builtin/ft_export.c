@@ -4,7 +4,7 @@ void    ft_write_export(char *str)
 {
     int i;
 
-    printf("declare -x ");
+    write(1, "declare -x ", 11);
     i = 0;
     while (str[i] != 0 && str[i] != '=')
     {
@@ -23,9 +23,25 @@ void    ft_write_export(char *str)
             write(1, &str[i], 1);
             i++;            
         }
-    }
-    write(1, "\"", 1);
+        write(1, "\"", 1);
+    }    
     write(1, "\n", 1);
+}
+
+int is_valid_identifier(char *str)
+{
+    int i;
+
+    if (!ft_isalpha(str[0]) && str[0] != '_')
+        return (0);
+    i = 1;
+    while ( str[i]) 
+    {
+        if (!ft_isalnum(str[i]) && str[i] != '_')
+            return (0);
+        i++;
+    }
+    return (1);
 }
 
 void ft_print_export(t_shell *shell)
@@ -41,6 +57,30 @@ void ft_print_export(t_shell *shell)
 		}
 }
 
+void    ft_export_vars(char **str, t_shell *shell)
+{
+    int i;
+    int var_len;
+    char    **var;
+
+    i = 1;
+    while (str[i])
+    {
+        if (!is_valid_identifier(str[i]))
+        {
+            printf("minishell: export: `%s': not a valid identifier", str[i]);
+            shell->exit_status = 1;
+        }
+        else
+        {
+            var_len = 0;
+            while (str[var_len] && str[var_len] != '=')
+                var_len++;
+            
+        }
+    }
+}
+
 // COMME POUR LES AUTRES FONCTIONS, TOUJOURS ENVOYER export EN PREMIERE LIGNE
 // DU TABLEAU
 void    ft_export(char **str, t_shell *shell)
@@ -50,10 +90,16 @@ void    ft_export(char **str, t_shell *shell)
     str_size = ft_strsize(str);
     if (!str[1])
     {
-        ft_print_export(shell);
         update_or_add("_", str[str_size - 1], shell->env, 0);
+        ft_print_export(shell);        
 		shell->exit_status = 0;
-    }        
+    }
+    else
+    {
+        shell->exit_status = 0;
+        update_or_add("_", str[str_size - 1], shell->env, 0);
+        ft_export_vars(str, shell);
+    }
 }
 
 int	main(int argc, char **argv, char **envp)

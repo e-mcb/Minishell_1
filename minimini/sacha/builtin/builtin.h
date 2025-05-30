@@ -39,5 +39,7 @@ int		env_var_exists(char *var, t_envvar *env);
 t_envvar	*ft_env_to_list(char **envp);
 char	*ft_getenv(char *var, t_envvar *env);
 char	*ft_strchr(char *s, int c);
+int	ft_isalnum(int c);
+int	ft_isalpha(int c);
 
 #endif
