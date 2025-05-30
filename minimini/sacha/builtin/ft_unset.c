@@ -1,79 +1,110 @@
 #include "builtin.h"
 
-void remove_var(char *var_name, char ***envp_ptr)
+void delete_node(char *var_name, t_envvar **head)
 {
-    char    **envp;
-    int     size;
-    int     i;
-    int     j;
+    t_envvar *current = *head;
+    t_envvar *prev = NULL;
 
-    envp = *envp_ptr;
-    size = ft_strsize(envp);
-    i = 0;
-    while (i < size)
-    {
-        if (ft_strncmp(envp[i], var_name, ft_strlen(var_name)) == 0
-            && envp[i][ft_strlen(var_name)] == '=')
+    while (current != NULL) {
+        if (ft_strncmp(current->var, var_name, ft_strlen(var_name)) == 0
+            && current->var[ft_strlen(var_name)] == '=')
         {
-            free(envp[i]);
-            j = i;
-            while (j < size - 1)
-            {
-                envp[j] = envp[j + 1];
-                j++;
+            if (prev == NULL) {
+                *head = current->next;
+            } else {
+                prev->next = current->next;
             }
-            envp[size - 1] = NULL;
-            size--;
-            continue ;
+            free(current->var);
+            current->var = NULL;
+            free(current); // Libère la mémoire du maillon
+            return;
         }
-        i++;
+        prev = current;
+        current = current->next;
     }
-    return ;
 }
 
-
-// VERIFIER LE COMPORTEMENT DE UNSET QUAND AUCUN ARGUMENT
-int ft_unset(char **args, char ***env_ptr)
+// TOUJOURS PASSER EN PREMIERE CHAINE LA COMMANDE , ICI UNSET
+void    ft_unset(char **str, t_shell *shell)
 {
     int i;
 
-    if (args[1] == NULL)
-    {
-        update_env("_", "unset", *env_ptr);
-        return (0);
-    }
     i = 1;
-    while (args[i])
+    while (str[i])
     {
-        remove_var(args[i], env_ptr);
+        delete_node(str[i], &shell->env);
         i++;
     }
-    update_env("_", args[i - 1], *env_ptr);
-    return (0);
+    update_or_add("_", str[i - 1], shell->env, 0);
+    shell->exit_status = 0; 
 }
 
-int main(int argc, char **argv, char **envp) {
-    int env_count = ft_strsize(envp);
+int	main(int argc, char **argv, char **envp)
+{
+	t_shell		*shell;
+	t_envvar	*env_copy;
 
-    char **my_env;
+	shell = malloc(sizeof(t_shell));
+	if (!shell)
+		return (1);
+	shell->env = NULL;
+	shell->exit_status = 0;
+	char *test1[] = {"unset", "Hello", "world", NULL};
+	char *test2[] = {"unset", "-n", "Hello", "world", NULL};
+	char *test3[] = {"unset", "-n", "-n", "Hello", NULL};
+	char *test4[] = {"unset", "-n", "-wrong", "Hello", NULL};
+	char *test5[] = {"unset", NULL};
+	char *test6[] = {"unset", "-nnnnnn", "-nnn", NULL};
+    char *test7[] = {"unset", "OLDPWD", NULL};
+	char **env;
 
-	my_env = ft_strdup_array(envp);
+	shell->env = ft_env_to_list(envp);
 
-    // Exemple d’appel comme dans un shell
-    char *cmd[] = {"unset", "PATH", "HOME", "PWD", NULL};
+	ft_unset(test1, shell); // ne fait rien	
+	ft_unset(test2, shell); // ne fait rien	
+	ft_unset(test3, shell); // ne fait rien	
+	ft_unset(test4, shell); // ne fait rien
+	ft_unset(test5, shell); // ne fait rien
+	ft_unset(test6, shell); // ne fait rien
+    ft_unset(test7, shell); // SUPPRIME OLDPWD
 
-    printf("Avant unset:\n");
-    ft_print_array(my_env);
+	env_copy = shell->env;
+	while (env_copy)
+	{
+		printf("%s\n", env_copy->var);
+		env_copy = env_copy->next;
+	}
 
-    ft_unset(cmd, &my_env);
-
-    printf("\nAprès unset:\n");
-    ft_print_array(my_env);
-
-    // Nettoyage mémoire
-    for (int i = 0; my_env[i]; i++)
-        free(my_env[i]);
-    free(my_env);
-
-    return 0;
+	return 0;
 }
+
+// void remove_var(char *var_name, char ***envp_ptr)
+// {
+//     char    **envp;
+//     int     size;
+//     int     i;
+//     int     j;
+
+//     envp = *envp_ptr;
+//     size = ft_strsize(envp);
+//     i = 0;
+//     while (i < size)
+//     {
+//         if (ft_strncmp(envp[i], var_name, ft_strlen(var_name)) == 0
+//             && envp[i][ft_strlen(var_name)] == '=')
+//         {
+//             free(envp[i]);
+//             j = i;
+//             while (j < size - 1)
+//             {
+//                 envp[j] = envp[j + 1];
+//                 j++;
+//             }
+//             envp[size - 1] = NULL;
+//             size--;
+//             continue ;
+//         }
+//         i++;
+//     }
+//     return ;
+// }

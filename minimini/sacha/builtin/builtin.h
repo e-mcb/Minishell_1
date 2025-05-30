@@ -34,8 +34,10 @@ void	ft_putstr_fd(char *str, int fd);
 // void	update_env(char *var, char *str, char **env);
 // int		env_var_exists(char *var, char **env);
 int		add_env_var(t_envvar **head, char *str, int exported);
-void	update_or_add(char *var, char *str, t_envvar *env);
+void	update_or_add(char *var, char *str, t_envvar *env, int exported);
 int		env_var_exists(char *var, t_envvar *env);
 t_envvar	*ft_env_to_list(char **envp);
+char	*ft_getenv(char *var, t_envvar *env);
+char	*ft_strchr(char *s, int c);
 
 #endif

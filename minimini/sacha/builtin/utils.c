@@ -12,6 +12,24 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
+char	*ft_strchr(char *s, int c)
+{
+	int		i;
+	char	c_char;
+
+	c_char = (char)c;
+	i = 0;
+	while (s[i] != 0)
+	{
+		if (s[i] == c_char)
+			return (s + i);
+		i++;
+	}
+	if (s[i] == c_char)
+		return (s + i);
+	return (NULL);
+}
+
 int	ft_strsize(char **str)
 {
 	int	i;
@@ -172,6 +190,107 @@ void	ft_putstr_fd(char *str, int fd)
 	}
 }
 
+int	env_var_exists(char *var, t_envvar *env)
+{
+	size_t		len;
+	int			i;
+	char		*full_var;
+	t_envvar	*copy_env;
+
+	if (!var || !env)
+		return (0);
+	full_var = ft_strjoin(var, "=");
+	if (!full_var)
+		return (-1);
+	len = ft_strlen(full_var);
+	copy_env = env;
+	while (copy_env)
+	{
+		if (strncmp(copy_env->var, full_var, len) == 0)
+		{
+			free(full_var);
+			return (1);
+		}
+		copy_env = copy_env->next;
+	}
+	free(full_var);
+	return (0);
+}
+
+void	update_env(char *var, char *str, t_envvar *env)
+{
+	size_t		len;
+	int			i;
+	char		*full_var;
+	char		*temp;
+	t_envvar	*copy_env;
+
+	i = 0;
+	full_var = ft_strjoin(var, "=");
+	len = ft_strlen(full_var);
+	copy_env = env;
+	while (copy_env)
+	{
+		if (ft_strncmp(copy_env->var, full_var, len) == 0)
+		{
+			free(copy_env->var);
+			temp = ft_strjoin("=", str);
+			copy_env->var = ft_strjoin(var, temp);
+			free(temp);
+			free(full_var);
+			return ;
+		}
+		copy_env = copy_env->next;
+	}
+	free(full_var);
+}
+
+void	update_or_add(char *var, char *str, t_envvar *env, int	exported)
+{
+	char	*temp;
+	char	*temp2;
+	int		exists;
+
+	exists = env_var_exists(var, env);
+	if (exists == 1)
+		update_env(var, str, env);
+	else if (exists == -1)
+		return ;
+	else
+	{
+		temp = ft_strjoin(var, "=");
+		if (!temp)
+			return ;
+		temp2 = ft_strjoin(temp, str);
+		free(temp);
+		if (!temp2)
+			return ;
+		add_env_var(&env, temp2, exported);
+		free(temp2);
+	}
+	return ;
+}
+
+char *ft_getenv(char *var, t_envvar *env)
+{
+	size_t len;
+	char *entry;
+	t_envvar	*env_copy;
+
+	if (!var)
+		return NULL;
+	len = ft_strlen(var);
+	env_copy = env;
+	while (env_copy)
+	{
+		entry = env_copy->var;
+		if (ft_strncmp(entry, var, len) == 0 && entry[len] == '=')
+			return entry + len + 1;
+		env_copy = env_copy->next;
+	}
+	return NULL;
+}
+
 // int	env_var_exists(char *var, char **env)
 // {
 // 	size_t	len;
@@ -260,75 +379,3 @@ void	ft_putstr_fd(char *str, int fd)
 // 		env = add_env_var("_", str, env);
 // 	return ;
 // }
-
-int	env_var_exists(char *var, t_envvar *env)
-{
-	size_t		len;
-	int			i;
-	char		*full_var;
-	t_envvar	*copy_env;
-
-	if (!var || !env)
-		return (0);
-	full_var = ft_strjoin(var, "=");
-	if (!full_var)
-		return (0);
-	len = strlen(full_var);
-	copy_env = env;
-	while (copy_env)
-	{
-		if (strncmp(copy_env->var, full_var, len) == 0)
-		{
-			free(full_var);
-			return (1);
-		}
-		copy_env = copy_env->next;
-	}
-	free(full_var);
-	return (0);
-}
-
-void	update_env(char *var, char *str, t_envvar *env)
-{
-	size_t	len;
-	int		i;
-	char	*full_var;
-	char	*temp;
-	t_envvar	*copy_env;
-
-	i = 0;
-	full_var = ft_strjoin(var, "=");
-	len = ft_strlen(full_var);
-	copy_env = env;
-	while (copy_env)
-	{
-		if (ft_strncmp(copy_env->var, full_var, len) == 0)
-		{
-			free(copy_env->var);
-			temp = ft_strjoin("=", str);
-			copy_env->var = ft_strjoin(var, temp);
-			free(temp);
-			free(full_var);
-			return ;
-		}
-		copy_env = copy_env->next;
-	}
-	free(full_var);
-}
-
-void	update_or_add(char *var, char *str, t_envvar *env)
-{
-	char	*temp;
-	char	*temp2;
-
-	if (env_var_exists(var, env) == 1)
-		update_env(var, str, env);
-	else
-	{
-		temp = ft_strjoin(var, "=");
-		temp2 = ft_strjoin(temp, str);
-		add_env_var(&env, temp2, 1);
-	}
-		
-	return ;
-}

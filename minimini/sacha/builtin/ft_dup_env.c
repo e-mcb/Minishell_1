@@ -26,10 +26,10 @@ t_envvar	*create_env_var(char *str, int exported)
 		return (NULL);
 	node->var = ft_strdup(str);
 	if (!node->var)
-		{
-			free(node);
-			return (NULL);
-		}
+	{
+		free(node);
+		return (NULL);
+	}
 	node->exported = exported;
 	node->next = NULL;
 	return (node);
@@ -42,9 +42,7 @@ int	add_env_var(t_envvar **head, char *str, int exported)
 
 	new_node = create_env_var(str, exported);
 	if (!new_node)
-	{
 		return (0);
-	}
 	if (!*head)
 	{
 		*head = new_node;
@@ -56,16 +54,23 @@ int	add_env_var(t_envvar **head, char *str, int exported)
 	current->next = new_node;
 	return (1);
 }
+
 t_envvar	*ft_env_to_list(char **envp)
 {
 	t_envvar	*env;
 	int			i;
+	int			exported;
 
+	if (!envp)
+		return (NULL);
 	env = NULL;
 	i = 0;
 	while (envp[i])
 	{
-		if (!add_env_var(&env, envp[i], 1))
+		exported = 1;
+		if (strncmp(envp[i], "_=", 2) == 0)
+			exported = 0;
+		if (!add_env_var(&env, envp[i], exported))
 		{
 			free_list(&env);
 			return (NULL);

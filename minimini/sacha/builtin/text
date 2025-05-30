@@ -14,3 +14,8 @@ comme les printf sont deja passe, l echo a eu lieu, je renvoie 0 et non 1
 
 _____________________________________________________________________________________________________________________________________________
 
+DEMANDER A MAXIME COMMENT GERER LES ERREURS LORSQUE LA FONCTION SE PASSE BIEN MAIS QUE LA MISE A JOUR DE _ FOIRE 
+
+______________________________________________________________________________________________________________________________________________
+
+Regarder ce que renvoie echo $_ juste après avoir lancé bash

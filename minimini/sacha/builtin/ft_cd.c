@@ -4,70 +4,65 @@
 #include <stdlib.h>
 #include "builtin.h"
 
-char *ft_getenv(char *var, char **env_copy)
-{
-	size_t len;
-	int i = 0;
-	char *entry;
-
-	if (!var)
-		return NULL;
-	len = ft_strlen(var);
-	while (env_copy[i])
-	{
-		entry = env_copy[i];
-		if (ft_strncmp(entry, var, len) == 0 && entry[len] == '=')
-			return entry + len + 1;
-		i++;
-	}
-	return NULL;
-}
-
-int ft_cd(char **str, t_shell *shell)
+// ATTENTION : DOIT TOUJOURS ETRE APPELEE AVEC cd COMME
+// PREMIERE CHAINE DU TABLEAU D ARGUMENTS
+// utilise un buffer de taille 1024 pour 
+// éviter de malloc
+// si pas pile un  argument, erreur + mise à jour de $_
+// si un argument, essaie le cd , mets a jour $_ 
+// traite les ~, - etc.. comme des chemins normaux
+// 25 LIGNES WESH :)
+void	ft_cd(char **str, t_shell *shell)
 {
 	char	*pwd;
-	char	*current_directory;
 	char	cwd[1024];
 
 	pwd = ft_getenv("PWD", shell->env);
-	if (!str[1]) {
-		ft_putstr_fd("minishell: cd: missing argument (absolute or relative path required)\n", 2);
-		update_env("_", "cd", shell->env);
-		return 1;
+	shell->exit_status = 1;
+	if (!str[1] || str[2])
+	{
+		if (!str[1])
+			ft_putstr_fd("minishell: cd: missing argument\n", 2);
+		else
+			ft_putstr_fd("minishell: cd: too many arguments\n", 2);
+		update_or_add("_", str[ft_strsize(str) - 1], shell->env, 0);
+		return ;
 	}
-	if (str[2]) {
-		ft_putstr_fd("minishell: cd: too many arguments\n", 2);
-		update_env("_", str[ft_strsize(str) - 1], shell->env);
-		return 1;
-	}
-	if (chdir(str[1]) != 0) {
+	if (chdir(str[1]) != 0)
+	{
 		perror("minishell: cd");
-		update_env("_", str[ft_strsize(str) - 1], shell->env);
-		return 1;
+		update_or_add("_", str[ft_strsize(str) - 1], shell->env, 0);
+		return ;
 	}
-	update_env("_", str[ft_strsize(str) - 1], shell->env);
-	update_env("OLDPWD", pwd, shell->env);
+	update_or_add("_", str[ft_strsize(str) - 1], shell->env, 0);
+	update_or_add("OLDPWD", pwd, shell->env, 0);
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
-		update_env("PWD", cwd, shell->env);    
-	return 0;
+		update_or_add("PWD", cwd, shell->env, 0);
+	shell->exit_status = 0;
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	char cwd[1024];
+	char	cwd[1024];
 	t_shell	*shell;
+	t_envvar	*env_copy;
 
 	shell = malloc(sizeof(t_shell));
 	if (!shell)
 		return (1);
-	shell->env = ft_strdup_array(envp);
+	shell->env = NULL;
 	shell->exit_status = 0;
-
-	if (ft_cd(argv, shell) != 0)
-		return 1;
+	shell->env = ft_env_to_list(envp);
+	ft_cd(argv, shell);
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 		printf("Current directory: %s\n", cwd);
 	else
 		perror("getcwd");
-	return 0;
+	env_copy = shell->env;
+	while (env_copy)
+	{
+		printf("%s\n", env_copy->var);
+		env_copy = env_copy->next;
+	}
+	return (0);
 }

@@ -4,24 +4,52 @@
 #include <stdlib.h>
 #include "builtin.h"
 
-int ft_pwd(char **str, char **env)
+// ATTENTION : DOIT TOUJOURS ETRE APPELEE AVEC pwd COMME
+// PREMIERE CHAINE DU TABLEAU D ARGUMENTS
+// utilise un buffer de taille 1024 pour 
+// éviter de malloc (on peut aussi utiliser PATH_MAX de limits.h)
+// la fonction retourne le cwd quel que soit le nombre d'arguments
+// le options ne sont pas à gérer. si options, la fonction affiche
+// le cwd normalement. 
+void    ft_pwd(char **str, t_shell *shell)
 {
     char cwd[1024];
 
-    update_env("_", str[ft_strsize(str) - 1], env);
+    update_or_add("_", str[ft_strsize(str) - 1], shell->env, 0);
     if (getcwd(cwd, sizeof(cwd)) != NULL)
-        return (printf("%s\n", cwd), 0);
+    {
+        printf("%s\n", cwd);
+        shell->exit_status = 0;
+    }
     else
-        return (perror("pwd"), 1);
+    {
+        perror("pwd");
+        shell->exit_status = 1;
+    }
 }
 
 int main(int argc, char **argv, char **envp)
 {
-    int return_status;
-	char **env;
+    t_shell		*shell;
+	t_envvar	*env_copy;
 
-	env = ft_strdup_array(envp);
-
-    return_status = ft_pwd(argv, env);
-    printf("code retour: %d\n", return_status);
+	shell = malloc(sizeof(t_shell));
+	if (!shell)
+		return (1);
+	shell->env = NULL;
+	shell->exit_status = 0;
+    shell->env = ft_env_to_list(envp);
+    char *test1[] = {"pwd", "Hello", "world", NULL};
+    char *test2[] = {"pwd", NULL};
+    char *test3[] = {"echo", "-L", "-n", NULL};
+    ft_pwd(test1, shell);
+    ft_pwd(test2, shell);
+    // ft_pwd(test3, shell);
+    env_copy = shell->env;
+	while (env_copy)
+	{
+		printf("%s\n", env_copy->var);
+		env_copy = env_copy->next;
+	}
+    return (0);
 }
