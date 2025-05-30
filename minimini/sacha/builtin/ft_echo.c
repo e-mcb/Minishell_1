@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_echo.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/30 22:31:46 by sradosav          #+#    #+#             */
+/*   Updated: 2025/05/30 22:31:47 by sradosav         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 // Renvoie 1 si l on a une chaine du type -n ou -nnnnn ou -nnnnnnnnn ...
@@ -60,19 +72,19 @@ int	ft_echo(char **str, t_shell *shell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell		*shell;
-	t_envvar	*env_copy;
+	// t_envvar	*env_copy;
 
 	shell = malloc(sizeof(t_shell));
 	if (!shell)
 		return (1);
 	shell->env = NULL;
 	shell->exit_status = 0;
-	char *test1[] = {"echo", "Hello", "world", NULL};
-	char *test2[] = {"echo", "-n", "Hello", "world", NULL};
-	char *test3[] = {"echo", "-n", "-n", "Hello", NULL};
-	char *test4[] = {"echo", "-n", "-wrong", "Hello", NULL};
-	char *test5[] = {"echo", NULL};
-	char *test6[] = {"echo", "-nnnnnn", "-nnn", NULL};
+	char *test1[] = {"echo", "-n", "-nnnn      ", "world", NULL};
+	// char *test2[] = {"echo", "-n", "Hello", "world", NULL};
+	// char *test3[] = {"echo", "-n", "-n", "Hello", NULL};
+	// char *test4[] = {"echo", "-n", "-wrong", "Hello", NULL};
+	// char *test5[] = {"echo", NULL};
+	// char *test6[] = {"echo", "-nnnnnn", "-nnn", NULL};
 	char **env;
 
 	shell->env = ft_env_to_list(envp);
@@ -80,27 +92,27 @@ int	main(int argc, char **argv, char **envp)
 	printf("Test 1:\n");
 	ft_echo(test1, shell); // => Hello world\n
 
-	printf("Test 2:\n");
-	ft_echo(test2, shell); // => Hello world
+	// printf("Test 2:\n");
+	// ft_echo(test2, shell); // => Hello world
 
-	printf("Test 3:\n");
-	ft_echo(test3, shell); // => Hello
+	// printf("Test 3:\n");
+	// ft_echo(test3, shell); // => Hello
 
-	printf("Test 4:\n");
-	ft_echo(test4, shell); // => -wrong Hello\n
+	// printf("Test 4:\n");
+	// ft_echo(test4, shell); // => -wrong Hello\n
 
-	printf("Test 5:\n");
-	ft_echo(test5, shell); // => \n
+	// printf("Test 5:\n");
+	// ft_echo(test5, shell); // => \n
 
-	printf("Test 6:\n");
-	ft_echo(test6, shell); // => \n
+	// printf("Test 6:\n");
+	// ft_echo(test6, shell); // => \n
 
-	env_copy = shell->env;
-	while (env_copy)
-	{
-		printf("%s\n", env_copy->var);
-		env_copy = env_copy->next;
-	}
+	// env_copy = shell->env;
+	// while (env_copy)
+	// {
+	// 	printf("%s\n", env_copy->var);
+	// 	env_copy = env_copy->next;
+	// }
 
 	return 0;
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/30 22:32:44 by sradosav          #+#    #+#             */
+/*   Updated: 2025/05/30 22:32:45 by sradosav         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 int	ft_isalnum(int c)
@@ -222,7 +234,7 @@ int	env_var_exists(char *var, t_envvar *env)
 	copy_env = env;
 	while (copy_env)
 	{
-		if (strncmp(copy_env->var, full_var, len) == 0)
+		if (ft_strncmp(copy_env->var, full_var, len) == 0)
 		{
 			free(full_var);
 			return (1);

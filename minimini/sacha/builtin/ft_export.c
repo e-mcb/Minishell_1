@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_export.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/30 22:32:04 by sradosav          #+#    #+#             */
+/*   Updated: 2025/05/30 22:32:05 by sradosav         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 void    ft_write_export(char *str)
@@ -68,7 +80,7 @@ void    ft_export_vars(char **str, t_shell *shell)
     {
         if (!is_valid_identifier(str[i]))
         {
-            printf("minishell: export: `%s': not a valid identifier", str[i]);
+            printf("minishell: export: `%s': not a valid identifier\n", str[i]);
             shell->exit_status = 1;
         }
         else

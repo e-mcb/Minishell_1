@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_cd.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/30 22:30:37 by sradosav          #+#    #+#             */
+/*   Updated: 2025/05/30 22:30:38 by sradosav         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -54,15 +66,15 @@ int	main(int argc, char **argv, char **envp)
 	shell->exit_status = 0;
 	shell->env = ft_env_to_list(envp);
 	ft_cd(argv, shell);
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-		printf("Current directory: %s\n", cwd);
-	else
-		perror("getcwd");
-	env_copy = shell->env;
-	while (env_copy)
-	{
-		printf("%s\n", env_copy->var);
-		env_copy = env_copy->next;
-	}
+	// if (getcwd(cwd, sizeof(cwd)) != NULL)
+	// 	printf("Current directory: %s\n", cwd);
+	// else
+	// 	perror("getcwd");
+	// env_copy = shell->env;
+	// while (env_copy)
+	// {
+	// 	printf("%s\n", env_copy->var);
+	// 	env_copy = env_copy->next;
+	// }
 	return (0);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_exit.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/30 22:31:57 by sradosav          #+#    #+#             */
+/*   Updated: 2025/05/30 22:31:58 by sradosav         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 #include <ctype.h>
 
@@ -52,7 +64,7 @@ int ft_exit(char **args, char **env)
     else
     {
         // ARGUMENT NUMERIQUE ON QUITTE AVEC CE CODE
-        exit_code = ft_atoi(args[1]);
+        exit_code = ft_atoi(args[1]) % 256;
         exit(exit_code);
     }
     return 0;
