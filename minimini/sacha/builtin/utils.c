@@ -12,6 +12,44 @@
 
 #include "builtin.h"
 
+static int	ft_isis3(char c)
+{
+	if ((c >= '\t' && c <= '\r') || c == ' ')
+		return (42);
+	else
+		return (0);
+}
+
+int	ft_atoi(const char *str)
+{
+	int		i;
+	int		nb_signes;
+	char	sign;
+	int		result;
+
+	i = 0;
+	nb_signes = 0;
+	sign = '+';
+	result = 0;
+	while (ft_isis3(str[i]) != 0)
+		i++;
+	while (str[i] == '+' || str[i] == '-')
+	{
+		sign = str[i++];
+		nb_signes++;
+		if (nb_signes > 1)
+			return (0);
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		result = (result * 10) + str[i++] - '0';
+	}
+	if (sign == '+')
+		return (result);
+	return (result * -1);
+}
+
+
 int	ft_isalnum(int c)
 {
 	if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122))
@@ -187,8 +225,6 @@ char	**ft_strdup_array(char **src)
 	return (dst);
 }
 
-#include <stdlib.h>
-
 char	*ft_strndup(const char *s, size_t n)
 {
 	size_t	i;
@@ -209,7 +245,6 @@ char	*ft_strndup(const char *s, size_t n)
 	copy[i] = '\0';
 	return (copy);
 }
-
 
 void	ft_print_array(char **str)
 {
@@ -261,12 +296,13 @@ int	env_var_exists(char *var, t_shell *shell)
 	{
 		if (ft_strcmp(copy_env->var, var) == 0
 			|| ft_strncmp(copy_env->var, var_equal, len + 1) == 0)
-			return(free(var_equal), 1);
+			return (free(var_equal), 1);
 		copy_env = copy_env->next;
 	}
 	free(var_equal);
 	return (0);
 }
+
 void	update_after_unset(char *var, t_shell *shell, char *full_var)
 {
 	t_envvar	*copy_env;
@@ -277,7 +313,7 @@ void	update_after_unset(char *var, t_shell *shell, char *full_var)
 	while (copy_env)
 	{
 		if (ft_strcmp(copy_env->var, var) == 0
-			|| ft_strncmp(copy_env->var,  full_var, len) == 0)
+			|| ft_strncmp(copy_env->var, full_var, len) == 0)
 		{
 			free(copy_env->var);
 			copy_env->var = NULL;
@@ -285,9 +321,36 @@ void	update_after_unset(char *var, t_shell *shell, char *full_var)
 			if (!copy_env->var)
 			{
 				free(full_var);
-				exit;
+				exit (1);
 				//FT_EXIT QUI FREE TOUT LE BORDEL
-			}	
+			}
+			return ;
+		}
+		copy_env = copy_env->next;
+	}
+}
+
+void	regular_update(char *var, t_shell *shell, char *full_var, char *str)
+{
+	t_envvar	*copy_env;
+	size_t		len;
+	char		*temp;
+
+	len = ft_strlen(full_var);
+	copy_env = shell->env;
+	while (copy_env)
+	{
+		if (ft_strcmp(copy_env->var, var) == 0
+			|| ft_strncmp(copy_env->var, full_var, len) == 0)
+		{
+			free(copy_env->var);
+			temp = ft_strjoin(full_var, str);
+			if (!temp)
+			{
+				free(full_var);
+				//FT_EXIT QUI FREE TOUT LE BORDEL
+			}
+			copy_env->var = temp;
 			return ;
 		}
 		copy_env = copy_env->next;
@@ -302,39 +365,18 @@ void	*update_env(char *var, char *str, t_shell *shell)
 	t_envvar	*copy_env;
 
 	full_var = ft_strjoin(var, "=");
-		if (!full_var)
-		{
-			//FT_EXIT QUI FREE TOUT LE BORDEL
-		}
+	if (!full_var)
+	{
+		//FT_EXIT QUI FREE TOUT LE BORDEL
+	}
 	if (!str)
 		update_after_unset(var, shell, full_var);
 	else
-	{		
-		len = ft_strlen(full_var);
-		copy_env = shell->env;
-		while (copy_env)
-		{
-			if (ft_strcmp(copy_env->var, var) == 0
-				|| ft_strncmp(copy_env->var,  full_var, len) == 0)
-			{
-				free(copy_env->var);
-				temp = ft_strjoin(full_var, str);
-				if (!temp)
-				{
-					free(full_var);
-					//FT_EXIT QUI FREE TOUT LE BORDEL
-				}
-				free(full_var);
-				copy_env->var = temp;	
-				return NULL;
-			}
-			copy_env = copy_env->next;
-		}
-	}
+		regular_update(var, shell, full_var, str);
 	return (free(full_var), NULL);
 }
 
-void	update_or_add(char *var, char *str, t_shell *shell, int	exported)
+void	update_or_add(char *var, char *str, t_shell *shell, int exported)
 {
 	char	*temp;
 	char	*temp2;
@@ -348,7 +390,10 @@ void	update_or_add(char *var, char *str, t_shell *shell, int	exported)
 		temp = ft_strjoin(var, "=");
 		if (!temp)
 			return ;
-		temp2 = ft_strjoin(temp, str);
+		if (!str)
+			temp2 = ft_strdup(var);
+		else
+			temp2 = ft_strjoin(temp, str);
 		free(temp);
 		if (!temp2)
 			return ;
@@ -358,22 +403,31 @@ void	update_or_add(char *var, char *str, t_shell *shell, int	exported)
 	return ;
 }
 
-char *ft_getenv(char *var, t_envvar *env)
+char	*ft_getenv(char *var, t_envvar *env)
 {
-	size_t len;
+	size_t		len;
 	t_envvar	*env_copy;
+	char		*full_var;
 
 	if (!var)
-		return NULL;
-	len = ft_strlen(var);
+		return (NULL);
+	full_var = ft_strjoin(var, "=");
+	if (!full_var)
+	{
+		// FT_EXIT QUI FREE TOUT LE BORDEL
+	}
+	len = ft_strlen(full_var);
 	env_copy = env;
 	while (env_copy)
 	{
-		if (ft_strncmp(env_copy->var, var, len) == 0 && env_copy->var[len] == '=')
-			return env_copy->var + len + 1;
+		if (ft_strcmp(env_copy->var, var) == 0)
+			return (free(full_var), NULL); // variable sans valeur
+		if (ft_strncmp(env_copy->var, full_var, len) == 0)
+			return (free(full_var), env_copy->var + len); // valeur après le '='
 		env_copy = env_copy->next;
 	}
-	return NULL;
+	free(full_var);
+	return (NULL);
 }
 
 // int	env_var_exists(char *var, char **env)

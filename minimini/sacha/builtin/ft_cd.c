@@ -29,9 +29,7 @@ void	ft_cd(char **str, t_shell *shell)
 	char	*pwd;
 	char	cwd[1024];
 
-	
 	pwd = ft_getenv("PWD", shell->env);
-	printf("\n[%s]\n", pwd);
 	shell->exit_status = 1;
 	if (!str[1] || str[2])
 	{
@@ -57,30 +55,28 @@ void	ft_cd(char **str, t_shell *shell)
 
 int	main(int argc, char **argv, char **envp)
 {
-	char	cwd[1024];
-	t_shell	*shell;
-	// t_envvar	*env_copy;
+	char		cwd[1024];
+	t_shell		*shell;
+	t_envvar	*env_copy;
 
-	// ft_print_array(envp);
 	shell = malloc(sizeof(t_shell));
 	if (!shell)
 		return (1);
 	shell->env = NULL;
 	shell->exit_status = 0;
 	shell->env = ft_env_to_list(envp, shell);
-	
 	ft_cd(argv, shell);
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 		printf("Current directory: %s\n", cwd);
 	else
 		perror("getcwd");
-	// env_copy = shell->env;
-	// while (env_copy)
-	// {
-	// 	printf("%s\n", env_copy->var);
-	// 	env_copy = env_copy->next;
-	// }
-	//free_list(&(shell->env));
-	//free(shell);
+	env_copy = shell->env;
+	while (env_copy)
+	{
+		printf("%s\n", env_copy->var);
+		env_copy = env_copy->next;
+	}
+	free_list(&(shell->env));
+	free(shell);
 	return (0);
 }

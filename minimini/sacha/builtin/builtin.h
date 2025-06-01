@@ -43,5 +43,6 @@ int	ft_isalnum(int c);
 int	ft_isalpha(int c);
 void	free_list(t_envvar **head);
 char	*ft_strndup(const char *s, size_t n);
+int	ft_atoi(const char *str);
 
 #endif

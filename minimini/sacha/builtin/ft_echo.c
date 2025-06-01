@@ -69,55 +69,54 @@ int	ft_echo(char **str, t_shell *shell)
 	return (0);
 }
 
-int	main(int argc, char **argv, char **envp)
-{
-	t_shell		*shell;
-	// t_envvar	*env_copy;
-	t_shell		*temp;
+// int	main(int argc, char **argv, char **envp)
+// {
+// 	t_shell		*shell;
+// 	// t_envvar	*env_copy;
+// 	t_shell		*temp;
 
-	shell = malloc(sizeof(t_shell));
-	if (!shell)
-		return (1);
-	shell->env = NULL;
-	shell->exit_status = 0;
-	char *test1[] = {"echo", "-n", "-nnnn      ", "world", NULL};
-	char *test2[] = {"echo", "-n", "Hello", "world", NULL};
-	char *test3[] = {"echo", "-n", "-n", "Hello", NULL};
-	char *test4[] = {"echo", "-n", "-wrong", "Hello", NULL};
-	char *test5[] = {"echo", NULL};
-	char *test6[] = {"echo", "-nnnnnn", "-nnn", NULL};
-	
+// 	shell = malloc(sizeof(t_shell));
+// 	if (!shell)
+// 		return (1);
+// 	shell->env = NULL;
+// 	shell->exit_status = 0;
+// 	char *test1[] = {"echo", "-n", "-nnnn      ", "world", NULL};
+// 	char *test2[] = {"echo", "-n", "Hello", "world", NULL};
+// 	char *test3[] = {"echo", "-n", "-n", "Hello", NULL};
+// 	char *test4[] = {"echo", "-n", "-wrong", "Hello", NULL};
+// 	char *test5[] = {"echo", NULL};
+// 	char *test6[] = {"echo", "-nnnnnn", "-nnn", NULL};
 
-	temp = shell;
-	shell->env = ft_env_to_list(envp, shell);
+// 	temp = shell;
+// 	shell->env = ft_env_to_list(envp, shell);
 
-	printf("Test 1:\n");
-	ft_echo(test1, shell); // => Hello world\n
+// 	printf("Test 1:\n");
+// 	ft_echo(test1, shell); // => Hello world\n
 
-	printf("Test 2:\n");
-	ft_echo(test2, shell); // => Hello world
+// 	printf("Test 2:\n");
+// 	ft_echo(test2, shell); // => Hello world
 
-	printf("Test 3:\n");
-	ft_echo(test3, shell); // => Hello
+// 	printf("Test 3:\n");
+// 	ft_echo(test3, shell); // => Hello
 
-	printf("Test 4:\n");
-	ft_echo(test4, shell); // => -wrong Hello\n
+// 	printf("Test 4:\n");
+// 	ft_echo(test4, shell); // => -wrong Hello\n
 
-	printf("Test 5:\n");
-	ft_echo(test5, shell); // => \n
+// 	printf("Test 5:\n");
+// 	ft_echo(test5, shell); // => \n
 
-	printf("Test 6:\n");
-	ft_echo(test6, shell); // => \n
+// 	printf("Test 6:\n");
+// 	ft_echo(test6, shell); // => \n
 
-	free_list(&(shell->env));
-	free(shell);
+// 	free_list(&(shell->env));
+// 	free(shell);
 
-	// env_copy = shell->env;
-	// while (env_copy)
-	// {
-	// 	printf("%s\n", env_copy->var);
-	// 	env_copy = env_copy->next;
-	// }
+// 	// env_copy = shell->env;
+// 	// while (env_copy)
+// 	// {
+// 	// 	printf("%s\n", env_copy->var);
+// 	// 	env_copy = env_copy->next;
+// 	// }
 
-	return 0;
-}
+// 	return 0;
+// }
