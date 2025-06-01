@@ -6,7 +6,7 @@
 /*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 22:32:44 by sradosav          #+#    #+#             */
-/*   Updated: 2025/05/30 22:32:45 by sradosav         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:44:54 by sradosav         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,76 +242,107 @@ void	ft_putstr_fd(char *str, int fd)
 	}
 }
 
-int	env_var_exists(char *var, t_envvar *env)
+int	env_var_exists(char *var, t_shell *shell)
 {
 	size_t		len;
 	char		*var_equal;
 	t_envvar	*copy_env;
 
-	if (!var || !env)
+	if (!var || !shell->env)
 		return (0);
 	var_equal = ft_strjoin(var, "=");
 	if (!var_equal)
-		return (-1);
+	{
+		// FT_EXIT
+	}
 	len = ft_strlen(var);
-	copy_env = env;
+	copy_env = shell->env;
 	while (copy_env)
 	{
-		if (ft_strcmp(copy_env->var, var) == 0)
-		{
-			free(var_equal);
-			return (1);
-		}
-		if (ft_strncmp(copy_env->var, var_equal, len + 1) == 0)
-		{
-			free(var_equal);
-			return (1);
-		}
+		if (ft_strcmp(copy_env->var, var) == 0
+			|| ft_strncmp(copy_env->var, var_equal, len + 1) == 0)
+			return(free(var_equal), 1);
 		copy_env = copy_env->next;
 	}
 	free(var_equal);
 	return (0);
 }
-
-void	update_env(char *var, char *str, t_envvar *env)
+void	update_after_unset(char *var, t_shell *shell, char *full_var)
 {
-	size_t		len;
-	int			i;
-	char		*full_var;
-	char		*temp;
 	t_envvar	*copy_env;
+	size_t		len;
 
-	i = 0;
-	full_var = ft_strjoin(var, "=");
 	len = ft_strlen(full_var);
-	copy_env = env;
+	copy_env = shell->env;
 	while (copy_env)
 	{
-		if (ft_strncmp(copy_env->var, full_var, len) == 0)
+		if (ft_strcmp(copy_env->var, var) == 0
+			|| ft_strncmp(copy_env->var,  full_var, len) == 0)
 		{
 			free(copy_env->var);
-			temp = ft_strjoin("=", str);
-			copy_env->var = ft_strjoin(var, temp);
-			free(temp);
-			free(full_var);
+			copy_env->var = NULL;
+			copy_env->var = ft_strdup(var);
+			if (!copy_env->var)
+			{
+				free(full_var);
+				exit;
+				//FT_EXIT QUI FREE TOUT LE BORDEL
+			}	
 			return ;
 		}
 		copy_env = copy_env->next;
 	}
-	free(full_var);
 }
 
-void	update_or_add(char *var, char *str, t_envvar *env, int	exported)
+void	*update_env(char *var, char *str, t_shell *shell)
+{
+	size_t		len;
+	char		*full_var;
+	char		*temp;
+	t_envvar	*copy_env;
+
+	full_var = ft_strjoin(var, "=");
+		if (!full_var)
+		{
+			//FT_EXIT QUI FREE TOUT LE BORDEL
+		}
+	if (!str)
+		update_after_unset(var, shell, full_var);
+	else
+	{		
+		len = ft_strlen(full_var);
+		copy_env = shell->env;
+		while (copy_env)
+		{
+			if (ft_strcmp(copy_env->var, var) == 0
+				|| ft_strncmp(copy_env->var,  full_var, len) == 0)
+			{
+				free(copy_env->var);
+				temp = ft_strjoin(full_var, str);
+				if (!temp)
+				{
+					free(full_var);
+					//FT_EXIT QUI FREE TOUT LE BORDEL
+				}
+				free(full_var);
+				copy_env->var = temp;	
+				return NULL;
+			}
+			copy_env = copy_env->next;
+		}
+	}
+	return (free(full_var), NULL);
+}
+
+void	update_or_add(char *var, char *str, t_shell *shell, int	exported)
 {
 	char	*temp;
 	char	*temp2;
 	int		exists;
 
-	exists = env_var_exists(var, env);
+	exists = env_var_exists(var, shell);
 	if (exists == 1)
-		update_env(var, str, env);
-	else if (exists == -1)
-		return ;
+		update_env(var, str, shell);
 	else
 	{
 		temp = ft_strjoin(var, "=");
@@ -321,7 +352,7 @@ void	update_or_add(char *var, char *str, t_envvar *env, int	exported)
 		free(temp);
 		if (!temp2)
 			return ;
-		add_env_var(&env, temp2, exported);
+		add_env_var(shell, temp2, exported);
 		free(temp2);
 	}
 	return ;
@@ -330,7 +361,6 @@ void	update_or_add(char *var, char *str, t_envvar *env, int	exported)
 char *ft_getenv(char *var, t_envvar *env)
 {
 	size_t len;
-	char *entry;
 	t_envvar	*env_copy;
 
 	if (!var)
@@ -339,9 +369,8 @@ char *ft_getenv(char *var, t_envvar *env)
 	env_copy = env;
 	while (env_copy)
 	{
-		entry = env_copy->var;
-		if (ft_strncmp(entry, var, len) == 0 && entry[len] == '=')
-			return entry + len + 1;
+		if (ft_strncmp(env_copy->var, var, len) == 0 && env_copy->var[len] == '=')
+			return env_copy->var + len + 1;
 		env_copy = env_copy->next;
 	}
 	return NULL;

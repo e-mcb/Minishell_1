@@ -6,7 +6,7 @@
 /*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 22:32:36 by sradosav          #+#    #+#             */
-/*   Updated: 2025/05/30 22:32:37 by sradosav         ###   ########.fr       */
+/*   Updated: 2025/06/01 17:45:53 by sradosav         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void    ft_pwd(char **str, t_shell *shell)
 {
     char cwd[1024];
 
-    update_or_add("_", str[ft_strsize(str) - 1], shell->env, 0);
+    update_or_add("_", str[ft_strsize(str) - 1], shell, 0);
     if (getcwd(cwd, sizeof(cwd)) != NULL)
     {
         printf("%s\n", cwd);
@@ -50,18 +50,20 @@ int main(int argc, char **argv, char **envp)
 		return (1);
 	shell->env = NULL;
 	shell->exit_status = 0;
-    shell->env = ft_env_to_list(envp);
+    shell->env = ft_env_to_list(envp, shell);
     char *test1[] = {"pwd", "Hello", "world", NULL};
     char *test2[] = {"pwd", NULL};
-    char *test3[] = {"echo", "-L", "-n", NULL};
+    char *test3[] = {"pwd", "-L", "-n", NULL};
     ft_pwd(test1, shell);
     ft_pwd(test2, shell);
-    // ft_pwd(test3, shell);
+    ft_pwd(test3, shell);
     env_copy = shell->env;
 	while (env_copy)
 	{
 		printf("%s\n", env_copy->var);
 		env_copy = env_copy->next;
 	}
+    free_list(&(shell->env));
+	free(shell);
     return (0);
 }

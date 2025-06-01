@@ -6,7 +6,7 @@
 /*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 22:31:57 by sradosav          #+#    #+#             */
-/*   Updated: 2025/05/30 22:31:58 by sradosav         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:22:01 by sradosav         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ int ft_is_number(const char *str)
     }
     return 1;
 }
-
+// ON PASSE TOUS LES POINTEURS A FREE DANS T_SHELL
+// DU COUP FONCTION A FAIRE QUI FREE TOUT EN MODE IF.... FREE...
 int ft_exit(char **str, t_shell *shell)
 {
     int exit_code;

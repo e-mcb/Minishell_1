@@ -6,7 +6,7 @@
 /*   By: sradosav <sradosav@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/30 22:30:55 by sradosav          #+#    #+#             */
-/*   Updated: 2025/05/30 22:30:56 by sradosav         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:12:16 by sradosav         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,11 @@ void	free_list(t_envvar **head)
 	current = *head;
 	while (current)
 	{
-		free(current->var);
-		current->var = NULL;
+		if (current->var)
+		{
+			free(current->var);
+			current->var = NULL;
+		}
 		next = current->next;
 		free(current);
 		current = next;
@@ -47,47 +50,42 @@ t_envvar	*create_env_var(char *str, int exported)
 	return (node);
 }
 
-int	add_env_var(t_envvar **head, char *str, int exported)
+void	add_env_var(t_shell *shell, char *str, int exported)
 {
 	t_envvar	*new_node;
 	t_envvar	*current;
 
 	new_node = create_env_var(str, exported);
 	if (!new_node)
-		return (0);
-	if (!*head)
 	{
-		*head = new_node;
-		return (1);
+		// FT_EXIT
 	}
-	current = *head;
+	if (!shell->env)
+	{
+		shell->env = new_node;
+		return ;
+	}		
+	current = shell->env;
 	while (current->next)
 		current = current->next;
 	current->next = new_node;
-	return (1);
 }
 
-t_envvar	*ft_env_to_list(char **envp)
+t_envvar	*ft_env_to_list(char **envp, t_shell *shell)
 {
-	t_envvar	*env;
 	int			i;
 	int			exported;
 
 	if (!envp)
 		return (NULL);
-	env = NULL;
 	i = 0;
 	while (envp[i])
 	{
 		exported = 1;
-		if (strncmp(envp[i], "_=", 2) == 0)
+		if (ft_strncmp(envp[i], "_=", 2) == 0)
 			exported = 0;
-		if (!add_env_var(&env, envp[i], exported))
-		{
-			free_list(&env);
-			return (NULL);
-		}
+		add_env_var(shell, envp[i], exported);
 		i++;
 	}
-	return (env);
+	return (shell->env);
 }
