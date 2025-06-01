@@ -12,6 +12,56 @@
 
 #include "builtin.h"
 
+t_envvar *copy_env_list(t_envvar *env) {
+    t_envvar *copy;
+    t_envvar    *tail;
+    t_envvar    *new_node;
+
+    copy = NULL;
+    tail = NULL;
+    while (env) {
+        new_node = malloc(sizeof(t_envvar));
+        if (!new_node)
+            return NULL;
+        new_node->var = ft_strdup(env->var);
+        new_node->next = NULL;
+        if (!copy) {
+            copy = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+        env = env->next;
+    }
+    return copy;
+}
+
+void ft_sort_env_list(t_envvar *head)
+{
+    int swapped;
+    t_envvar *ptr;
+    char *tmp;
+
+    if (!head)
+        return;
+    swapped = 1;
+    while (swapped) {
+        swapped = 0;
+        ptr = head;
+
+        while (ptr->next) {
+            if (ft_strcmp(ptr->var, ptr->next->var) > 0) {
+                tmp = ptr->var;
+                ptr->var = ptr->next->var;
+                ptr->next->var = tmp;
+                swapped = 1;
+            }
+            ptr = ptr->next;
+        }
+    }
+}
+
+
 void    ft_write_export(char *str)
 {
     int i;
@@ -42,12 +92,11 @@ void    ft_write_export(char *str)
 
 int is_valid_identifier(char *str)
 {
-    int i;
+    int i = 0;
 
-    if (!ft_isalpha(str[0]) && str[0] != '_')
+    if (!str || (!ft_isalpha(str[0]) && str[0] != '_'))
         return (0);
-    i = 1;
-    while ( str[i]) 
+    while (str[i] && str[i] != '=')
     {
         if (!ft_isalnum(str[i]) && str[i] != '_')
             return (0);
@@ -56,24 +105,30 @@ int is_valid_identifier(char *str)
     return (1);
 }
 
+
 void ft_print_export(t_shell *shell)
 {
     t_envvar    *env_copy;
+    t_envvar    *iter;
     
-    env_copy = shell->env;
-		while (env_copy)
-		{
-			if (env_copy->exported == 1)
-                ft_write_export(env_copy->var);              
-			env_copy = env_copy->next;
-		}
+    env_copy = copy_env_list(shell->env);
+    ft_sort_env_list(env_copy);
+    iter = env_copy;
+    while (iter)
+    {
+        if (iter->exported == 1)
+            ft_write_export(iter->var);
+        iter = iter->next;
+    }
+    free_list(&env_copy);
 }
 
-void    ft_export_vars(char **str, t_shell *shell)
+void ft_export_vars(char **str, t_shell *shell)
 {
-    int i;
-    int var_len;
-    char    **var;
+    int     i;
+    int     var_len;
+    char    *var;
+    char    *value;
 
     i = 1;
     while (str[i])
@@ -86,12 +141,22 @@ void    ft_export_vars(char **str, t_shell *shell)
         else
         {
             var_len = 0;
-            while (str[var_len] && str[var_len] != '=')
+            while (str[i][var_len] && str[i][var_len] != '=')
                 var_len++;
-            
+            var = ft_strndup(str[i], var_len);
+            if (!var)
+                return ;
+            if (ft_strchr(str[i], '='))
+                value = ft_strchr(str[i], '=') + 1;
+            else
+                value = "";
+            update_or_add(var, value, shell->env, 1);
+            free(var);
         }
+        i++;
     }
 }
+
 
 // COMME POUR LES AUTRES FONCTIONS, TOUJOURS ENVOYER export EN PREMIERE LIGNE
 // DU TABLEAU
@@ -117,7 +182,7 @@ void    ft_export(char **str, t_shell *shell)
 int	main(int argc, char **argv, char **envp)
 {
 	t_shell		*shell;
-    // t_envvar    *env_copy;
+    t_envvar    *env_copy;
 
 	shell = malloc(sizeof(t_shell));
 	if (!shell)
@@ -132,12 +197,12 @@ int	main(int argc, char **argv, char **envp)
 	ft_export(test1, shell);	
 	ft_export(test2, shell);
 
-    // env_copy = shell->env;
-	// while (env_copy)
-	// {
-	// 	printf("%s\n%d\n\n", env_copy->var, env_copy->exported);
-	// 	env_copy = env_copy->next;
-	// }
+    env_copy = shell->env;
+	while (env_copy)
+	{
+		printf("%s\n%d\n\n", env_copy->var, env_copy->exported);
+		env_copy = env_copy->next;
+	}
 
 	return 0;
 }

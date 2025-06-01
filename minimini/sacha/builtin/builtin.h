@@ -41,5 +41,7 @@ char	*ft_getenv(char *var, t_envvar *env);
 char	*ft_strchr(char *s, int c);
 int	ft_isalnum(int c);
 int	ft_isalpha(int c);
+void	free_list(t_envvar **head);
+char	*ft_strndup(const char *s, size_t n);
 
 #endif

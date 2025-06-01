@@ -187,6 +187,30 @@ char	**ft_strdup_array(char **src)
 	return (dst);
 }
 
+#include <stdlib.h>
+
+char	*ft_strndup(const char *s, size_t n)
+{
+	size_t	i;
+	char	*copy;
+
+	i = 0;
+	while (s[i] && i < n)
+		i++;
+	copy = (char *)malloc(sizeof(char) * (i + 1));
+	if (!copy)
+		return (NULL);
+	i = 0;
+	while (s[i] && i < n)
+	{
+		copy[i] = s[i];
+		i++;
+	}
+	copy[i] = '\0';
+	return (copy);
+}
+
+
 void	ft_print_array(char **str)
 {
 	int	i;
@@ -221,27 +245,31 @@ void	ft_putstr_fd(char *str, int fd)
 int	env_var_exists(char *var, t_envvar *env)
 {
 	size_t		len;
-	int			i;
-	char		*full_var;
+	char		*var_equal;
 	t_envvar	*copy_env;
 
 	if (!var || !env)
 		return (0);
-	full_var = ft_strjoin(var, "=");
-	if (!full_var)
+	var_equal = ft_strjoin(var, "=");
+	if (!var_equal)
 		return (-1);
-	len = ft_strlen(full_var);
+	len = ft_strlen(var);
 	copy_env = env;
 	while (copy_env)
 	{
-		if (ft_strncmp(copy_env->var, full_var, len) == 0)
+		if (ft_strcmp(copy_env->var, var) == 0)
 		{
-			free(full_var);
+			free(var_equal);
+			return (1);
+		}
+		if (ft_strncmp(copy_env->var, var_equal, len + 1) == 0)
+		{
+			free(var_equal);
 			return (1);
 		}
 		copy_env = copy_env->next;
 	}
-	free(full_var);
+	free(var_equal);
 	return (0);
 }
 

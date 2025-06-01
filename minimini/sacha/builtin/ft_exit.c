@@ -36,35 +36,37 @@ int ft_is_number(const char *str)
     return 1;
 }
 
-int ft_exit(char **args, char **env)
+int ft_exit(char **str, t_shell *shell)
 {
     int exit_code;
     
     exit_code = 0;
     printf("exit\n");
-    if (args[1] == NULL)
+    if (str[1] == NULL)
     {
         // FREE AVANT DE SORTIR
-        // METTRE LE CODE DE SORTIE A 0
+        shell->exit_status = 0;
         exit(0); 
     }
-    else if (!is_number(args[1]))
+    else if (!is_number(str[1]))
     {
         // ARGUMENT NON NUMERIQUE - MESSAGE ET SORTIE 2
-        fprintf(stderr, "bash: exit: %s: argument numérique nécessaire\n", args[1]);
+        fprintf(stderr, "bash: exit: %s: argument numérique nécessaire\n", str[1]);
+        shell->exit_status = 2;
         exit(2);
     }
-    else if (args[2] != NULL)
+    else if (str[2] != NULL)
     {
         // TROP D ARGUMENTS, MESSAGE D ERREUR MAIS NE QUITTE PAS
         ft_putstr_fd("bash: exit: trop d'arguments\n", 2);
-        // METTRE LE CODE DE SORTIE A 1
+        shell->exit_status = 1;
         return 1;
     }
     else
     {
         // ARGUMENT NUMERIQUE ON QUITTE AVEC CE CODE
-        exit_code = ft_atoi(args[1]) % 256;
+        exit_code = (ft_atoi(str[1]) % 256);
+        shell->exit_status = exit_code;
         exit(exit_code);
     }
     return 0;

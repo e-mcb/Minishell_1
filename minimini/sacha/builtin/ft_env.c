@@ -34,8 +34,11 @@ void ft_env(char **str, t_shell *shell)
 		env_copy = shell->env;
 		while (env_copy)
 		{
-			if (env_copy->exported == 1 && ft_strchr(env_copy->var, '='))
+			if (env_copy->exported == 1 && ft_strchr(env_copy->var, '=')&&
+				ft_strncmp(env_copy->var, "_=", 2) != 0)
+			{
 				printf("%s\n", env_copy->var);
+			}				
 			env_copy = env_copy->next;
 		}
 		update_or_add("_", str[str_size - 1], shell->env, 0);
